@@ -1,31 +1,23 @@
 package br.com.emailsenderapi.controller;
 
+import br.com.emailsenderapi.dto.EmailDto;
 import br.com.emailsenderapi.service.EnviarEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("api/email")
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/api/email")
 public class EnviarEmailController {
 
     @Autowired
     private EnviarEmailService service;
 
-    @GetMapping(value = "/enviar-texto")
-    public void enviarEmailTexto(String destinatario, String titulo ,String texto) throws Exception{
-        service.enviar(destinatario, titulo, texto);
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @PostMapping
+    public void enviarEmailTexto(@RequestBody @Valid EmailDto emailDto) throws Exception{
+        service.enviar(emailDto);
     }
-
-    @GetMapping(value = "/enviar-arquivo")
-    public void enviarEmailArquivo(String destinatario, String titulo ,String arquivo) throws Exception{
-        service.enviarPdf(destinatario, titulo, arquivo);
-    }
-
-    @GetMapping(value = "/enviar-texto-arquivo")
-    public void enviarEmailTextoEArquivo(String destinatario, String titulo ,String texto, String arquivo) throws Exception{
-        service.enviarTextoEPdf(destinatario, titulo,texto, arquivo);
-    }
-
 }

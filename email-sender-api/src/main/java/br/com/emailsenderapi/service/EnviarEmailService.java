@@ -1,16 +1,15 @@
 package br.com.emailsenderapi.service;
 
-import lombok.extern.slf4j.Slf4j;
+import br.com.emailsenderapi.dto.EmailDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 public class EnviarEmailService {
 
     @Value("${spring.mail.username}")
@@ -19,53 +18,20 @@ public class EnviarEmailService {
     @Autowired
     private JavaMailSender envioDeEmail;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnviarEmailService.class);
 
-    public void enviar(String destinatario, String titulo ,String texto) throws Exception {
+
+    public void enviar(EmailDto email) throws Exception {
         SimpleMailMessage mensagem = new SimpleMailMessage();
 
         try {
-            log.info("Enviando email para: ", destinatario);
+            LOGGER.info("Enviando email para: " + email.getDestinatario());
             mensagem.setFrom(remetente);
-            mensagem.setFrom(destinatario);
-            mensagem.setSubject(titulo);
-            mensagem.setText(texto);
+            mensagem.setTo(email.getDestinatario());
+            mensagem.setSubject(email.getTitulo());
+            mensagem.setText(email.getTexto());
             envioDeEmail.send(mensagem);
-        }catch (Exception ex){
-            throw ex;
-        }
-    }
 
-    public void enviarPdf(String destinatario, String titulo ,String arquivo) throws Exception {
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-
-        EmailAttachment messageHelper = new MimeMessageHelper();
-
-        try {
-            log.info("Enviando email para: ", destinatario);
-            mensagem.setFrom(remetente);
-            mensagem.setFrom(destinatario);
-            mensagem.setSubject(titulo);
-            messageHelper.addAttachment("arquivo", new ClassPathResource(arquivo));
-            envioDeEmail.send(mensagem);
-        }catch (Exception ex){
-            throw ex;
-        }
-    }
-
-    public void enviarTextoEPdf(String destinatario, String titulo ,String texto, String arquivo) throws Exception {
-        SimpleMailMessage mensagem = new SimpleMailMessage();
-
-        MimeMessageHelper messageHelper = new MimeMessageHelper();
-
-        try {
-            log.info("Enviando email para: ", destinatario);
-            mensagem.setFrom(remetente);
-            mensagem.setFrom(destinatario);
-            mensagem.setSubject(titulo);
-
-            messageHelper.addAttachment("arquivo", new ClassPathResource(arquivo));
-            mensagem.setText(texto);
-            envioDeEmail.send(mensagem);
         }catch (Exception ex){
             throw ex;
         }
