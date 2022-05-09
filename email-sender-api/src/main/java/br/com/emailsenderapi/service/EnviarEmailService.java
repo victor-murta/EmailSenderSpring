@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class EnviarEmailService {
 
-    @Value("${spring.mail.username}")
-    private String remetente;
-
     @Autowired
     private JavaMailSender envioDeEmail;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnviarEmailService.class);
+
+    @Value("${spring.mail.username")
+    private String remetente;
 
 
     public void enviar(EmailDto email) throws Exception {
@@ -26,8 +26,8 @@ public class EnviarEmailService {
 
         try {
             LOGGER.info("Enviando email para: " + email.getDestinatario());
-            mensagem.setFrom(remetente);
             mensagem.setTo(email.getDestinatario());
+            mensagem.setFrom(remetente);
             mensagem.setSubject(email.getTitulo());
             mensagem.setText(email.getTexto());
             envioDeEmail.send(mensagem);
